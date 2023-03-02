@@ -37,8 +37,8 @@ public class ChaseState : FSMState
     {
         //Rotate to the target point
         destPos = player.position;
-
-        Quaternion targetRotation = Quaternion.LookRotation(destPos - npc.position);
+        Vector3 dir = destPos - npc.position; dir.y = 0;
+        Quaternion targetRotation = Quaternion.LookRotation(dir);
         npc.rotation = Quaternion.Slerp(npc.rotation, targetRotation, Time.deltaTime * curRotSpeed);
 
         //Go Forward

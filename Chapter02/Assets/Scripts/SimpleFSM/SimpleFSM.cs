@@ -117,7 +117,8 @@ public class SimpleFSM : FSM {
         }
 
         //Rotate to the target point
-        Quaternion targetRotation = Quaternion.LookRotation(destPos - transform.position);
+        Vector3 dir = destPos - transform.position; dir.y = 0;
+        Quaternion targetRotation = Quaternion.LookRotation(dir);
         transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * curRotSpeed);
 
         //Go Forward
@@ -160,7 +161,8 @@ public class SimpleFSM : FSM {
         if (dist >= attackRadius && dist < playerNearRadius) {
             // Rotate target point
             // The rotation is only around the vertical axis of the tank.
-            Quaternion targetRotation = Quaternion.FromToRotation(frontVector, destPos - transform.position);
+            Vector3 dir = destPos - transform.position; dir.y = 0;
+            Quaternion targetRotation = Quaternion.FromToRotation(frontVector, dir);
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * curRotSpeed);
 
             //Go Forward
@@ -174,7 +176,8 @@ public class SimpleFSM : FSM {
         }
 
         //Always Turn the turret towards the player
-        Quaternion turretRotation = Quaternion.FromToRotation(frontVector, destPos - transform.position);
+        Vector3 dirTurret = destPos - transform.position; dirTurret.y = 0;
+        Quaternion turretRotation = Quaternion.FromToRotation(frontVector, dirTurret);
         turret.rotation = Quaternion.Slerp(turret.rotation, turretRotation, Time.deltaTime * curRotSpeed);
 
         //Shoot the bullets

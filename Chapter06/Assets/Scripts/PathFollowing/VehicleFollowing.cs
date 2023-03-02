@@ -10,9 +10,6 @@ public class VehicleFollowing : MonoBehaviour {
     public bool isLooping = true;
     public float waypointRadius = 1.0f;
 
-    //Actual speed of the vehicle 
-    private float curSpeed;
-
     private int curPathIndex = 0;
     private float pathLength;
     private Vector3 targetPoint;
@@ -24,13 +21,11 @@ public class VehicleFollowing : MonoBehaviour {
         pathLength = path.Length;
 
         //get the current velocity of the vehicle
-        velocity = transform.forward;
+        velocity = Steer(transform.position + transform.forward); //transform.forward;
     }
 
     // Update is called once per frame
     void Update() {
-        //Unify the speed
-        curSpeed = speed * Time.deltaTime;
 
         targetPoint = path.GetPoint(curPathIndex);
 
@@ -55,7 +50,7 @@ public class VehicleFollowing : MonoBehaviour {
         else
             velocity += Steer(targetPoint);
 
-        transform.position += velocity; //Move the vehicle according to the velocity
+        transform.position += velocity * Time.deltaTime; //Move the vehicle according to the velocity
         transform.rotation = Quaternion.LookRotation(velocity); //Rotate the vehicle towards the desired Velocity
     }
 
@@ -70,9 +65,9 @@ public class VehicleFollowing : MonoBehaviour {
 
         // 
         if (bFinalPoint && dist < waypointRadius)
-            desiredVelocity *= curSpeed * (dist / waypointRadius);
+            desiredVelocity *= speed * (dist / waypointRadius);
         else
-            desiredVelocity *= curSpeed;
+            desiredVelocity *= speed;
 
         //Calculate the force Vector
         Vector3 steeringForce = desiredVelocity - velocity;

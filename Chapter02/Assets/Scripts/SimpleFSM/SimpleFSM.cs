@@ -9,6 +9,7 @@ public class SimpleFSM : FSM {
         Chase,
         Attack,
         Dead,
+        Return,
     }
 
     //Current state that the NPC is reaching
@@ -53,6 +54,9 @@ public class SimpleFSM : FSM {
     public Transform turret;
     public Transform bulletSpawnPoint;
 
+    // THIS IS OUR BULLSHIT DO NOT TOUCH
+    public Transform baseLocation;
+
 
     //Initialize the Finite state machine for the NPC tank
     protected override void Initialize() {
@@ -90,6 +94,9 @@ public class SimpleFSM : FSM {
             case FSMState.Dead:
                 UpdateDeadState();
                 break;
+            case FSMState.Return:
+                UpdateReturnState();
+                break;
         }
 
         //Update the time
@@ -98,6 +105,21 @@ public class SimpleFSM : FSM {
         //Go to dead state is no health left
         if (health <= 0)
             curState = FSMState.Dead;
+    }
+
+    /// <summary>
+    /// Return state
+    /// </summary>
+    protected void UpdateReturnState() {
+        if (transform.position != baseLocation.position){
+            print("RETURNING TO BASE");
+            transform.Translate(baseLocation.position);
+            Quaternion targetRotation = Quaternion.LookRotation(baseLocation.position);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * curRotSpeed);
+        }
+        if (transform.position == baseLocation.position) { 
+            curState = FSMState.Patrol;
+        }
     }
 
     /// <summary>
@@ -140,7 +162,8 @@ public class SimpleFSM : FSM {
         }
         //Go back to patrol is it become too far
         else if (dist >= playerNearRadius) {
-            curState = FSMState.Patrol;
+            curState = FSMState.Return;
+            print("PLayer out of reach");
         }
 
         //Go Forward
